@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket.io</title>
+
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="/js/main.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        
+    </style>
+
+    <script>
+
+        var socket = io();
+
+        socket.on('msg', function (msg) {
+
+            $("#chatBody")[0].innerHTML += `<p class="msg-outro">${msg}</p>`;
+            console.log("ddd");
+
+        });
+
+        function enviar() {
+
+            let chat = document.getElementById("chatMsg");
+
+            if (chat.innerHTML.trim() != "") {
+                $("#chatBody")[0].innerHTML += `<p class="msg-eu">${chat.innerHTML.trim()}</p>`;
+                socket.emit('msg', chat.innerHTML.trim());
+                chat.innerHTML = "";
+            }
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">Universidade Tiradentes</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="row chat">
+                <div id="chatBody" class="offset-md-2 col-md-8 chat-body">
+
+                </div>
+                <div id="chatMsg" class="offset-md-2 col-md-8 chat-footer" contentEditable="true" placeholder="Digite uma MSG...">
+                </div>
+                <div class="offset-md-2 col-md-8">
+                    <a onclick="enviar()" class="btn btn-success float-right" href="#">Enviar</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+
+    </footer>
+
+</body>
+
+</html>

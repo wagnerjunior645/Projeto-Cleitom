@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Página de Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket.io</title>
+    
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.cookie.js"></script>
+
+	<style type="text/css">
+
+	body { 
+		background: url(/image/bg_unit.png) center center fixed;
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+	}
+
+	/*Div-Main*/
+	.div-main{
+		background: rgba(255, 255, 255, 0.85);
+		margin-top: 70px;
+	}
+
+	.div-main div h3{
+		margin-top: 10px;
+		margin-bottom: 30px;
+	}
+
+	.div-main-2{
+		background: rgba(255, 255, 255, 0.85);
+		margin-top: 15px;
+		padding-bottom: 20px;
+		padding-top: 20px;
+	}
+
+	.div-main-2 div h3{
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+
+	.div-input{
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+
+	.div-div-input{
+		padding-bottom: 2px;
+		border-bottom: solid 1px #83BAD9;
+	}
+
+	.div-div-input input{
+		color: #000000;
+	}
+
+	.div-div-input input:focus{
+		color: #000000;
+	}
+
+	.form-control:focus .div-div-input{
+		border-color: #0A8AD2;
+	}
+
+	/*Esse média quer dizer que se for menor ou igual a 992px ele vai executar oque esta entre as chaves*/
+	@media (max-width: 600px) { 
+		.div-main div h3{
+			font-size: 20px;
+		}
+		.div-main{
+			margin-top: 10px;
+		}
+	}
+
+	label{
+		font-size: 18px;
+		font-weight: bold;
+		color: #405f73;
+	}
+
+	.form-control , .form-control:focus {
+		background: none;
+		border: none;
+		box-shadow: none;
+	}
+
+	.div-button{
+		margin-top: 30px;
+		height: 50px;
+		padding-top: 10px;
+		padding-bottom: 30px;
+		background-color: #1f4f82;
+		font-size: 22px;
+		margin-bottom: 20px;
+	}
+
+	.div-button:hover{
+		background-color: #007cba;
+		cursor: pointer;
+		outline: 1px solid #FFF;
+	}
+
+	.div-button-2{
+		height: 50px;
+		padding-top: 10px;
+		padding-bottom: 30px;
+		background-color: #FFFFFF;
+		font-size: 22px;
+	}
+
+	.div-button-2:hover{
+		background-color: #007cba;
+		cursor: pointer;
+		outline: 1px solid #FFF;
+	}
+
+	.div-button-2:hover a{
+		color: #FFFFFF;
+	}
+
+	.div-button-2 a{
+		color: #1f4f82;
+	}
+
+	a,a:focus,a:hover{
+		color: #FFFFFF;
+		text-decoration: none;
+	}
+
+	.div-button-footer{
+		margin-top: 20px;
+	}
+
+	.div-button-footer a{
+		color: #405f73;
+	}
+
+    </style>
+
+<script>
+
+    $( document ).ready(function() {
+        $(".botao-iniciar").click(function(){
+            login();
+        });
+    });
+
+    function login() {
+
+        let user = document.getElementById("user").value;
+        let password = document.getElementById("password").value;
+
+        if(user.trim() != "" && password.trim() != ""){
+
+            $.ajax({
+                type: "post" ,
+                url: "/login" ,
+                data: {user: user , password: password} ,
+                success: function (response) {
+                    $.cookie('token', response);
+                    window.location = "/home";
+                },
+                error: function (response) {
+                    console.log(`ERROR: ${response}`);
+                }
+            });
+
+        }
+
+    }
+
+    function removerCookie(){
+        $.removeCookie("token");
+    }
+
+</script>
+
+
+</head>
+<body onload="removerCookie()">
+	<main>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="div-main offset-1 col-10 offset-md-3 col-md-6">
+
+					<div class="div-head text-center">
+						<h3>Automação Residencial Unit</h3>
+					</div>
+
+					<div class="div-form">
+						<div class="div-input">
+							<div class="text-center">
+								<label>Usuario</label>
+							</div>
+							<div class="div-div-input">
+								<input class="col-12 form-control" type="text" name="user" id="user" placeholder="Digite o Usuario ou Email...">
+							</div>
+						</div>
+						<div class="div-input">
+							<div class="text-center">
+								<label>Senha</label>
+							</div>
+							<div class="div-div-input">
+								<input class="col-12 form-control" type="password" name="password" id="password" placeholder="Digite sua Senha...">
+							</div>
+						</div>
+
+						<div>
+							<div class="div-input">
+								<div class="botao-iniciar div-button text-center">
+									<a onclick="" class="botao-iniciar" href="#">Logar</a>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="div-footer">
+						
+					</div>
+
+				</div>
+            </div>
+            
+			<div class="row">
+				<div class="div-main-2 offset-1 col-10 offset-md-3 col-md-6">
+					<div class="text-center div-button-2" id="botao-cadastrar">
+						<a href="#">Cadastrar Conta</a>
+					</div>
+					<div class="text-center div-button-footer">
+						<a href="#">© Projeto Arduino | </a>
+						<a class="linha" href="#">Condições de Utilização | </a>
+						<a class="linha" href="#">Política de Privacidade</a>
+					</div>
+				</div>
+            </div>
+            
+		</div>
+	</main>
+</body>
+
+</html>

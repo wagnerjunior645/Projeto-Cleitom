@@ -1,0 +1,56 @@
+
+
+footer{
+    background-color: #5a5a5a;
+    color: #ffffff;
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+.chat {
+    margin-top: 100px;
+}
+
+.chat-body {
+    border: solid 2px #757575;
+    min-height: 250px;
+}
+
+.chat-footer {
+    border: solid 2px #757575;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    border: none;
+}
+
+[contenteditable=true]:empty:before {
+    content: attr(placeholder);
+    display: block;
+    /* For Firefox */
+}
+
+/* */
+
+div[contenteditable=true] {
+    border: 1px dashed #AAA;
+    width: 290px;
+    padding: 5px;
+}
+
+.chat-body p {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.msg-eu {
+    text-align: right;
+}
+
+.msg-outro {
+    background-color: #efefef;
+    text-align: left;
+}

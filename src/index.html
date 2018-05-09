@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Socket.io</title>
+
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/popper.js/dist/umd/popper.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        .chat {
+            margin-top: 100px;
+        }
+
+        .chat-body {
+            border: solid 2px #757575;
+            min-height: 250px;
+        }
+
+        .chat-footer {
+            border: solid 2px #757575;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            border: none;
+        }
+
+        [contenteditable=true]:empty:before {
+            content: attr(placeholder);
+            display: block;
+            /* For Firefox */
+        }
+
+        /* */
+
+        div[contenteditable=true] {
+            border: 1px dashed #AAA;
+            width: 290px;
+            padding: 5px;
+        }
+
+        .chat-body p {
+            margin-bottom: 5px;
+            margin-top: 5px;
+            padding: 5px;
+        }
+
+        .msg-eu{
+            text-align: right;
+        }
+
+        .msg-outro {
+            background-color: #efefef;
+            text-align: left;
+        }
+
+    </style>
+
+    <script>
+
+        var socket = io();
+
+        socket.on('msg', function (msg) {
+
+            $("#chatBody")[0].innerHTML += `<p class="msg-outro">${msg}</p>`;
+            console.log("ddd");
+
+        });
+
+        function enviar() {
+
+            let chat = document.getElementById("chatMsg");
+
+            if (chat.innerHTML.trim() != "") {
+                $("#chatBody")[0].innerHTML += `<p class="msg-eu">${chat.innerHTML.trim()}</p>`;
+                socket.emit('msg', chat.innerHTML.trim());
+                chat.innerHTML = "";
+            }
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <div class="row chat">
+                <div id="chatBody" class="offset-md-2 col-md-8 chat-body">
+                    
+                </div>
+                <div id="chatMsg" class="offset-md-2 col-md-8 chat-footer" contentEditable="true" placeholder="Digite uma MSG...">
+                </div>
+                <div class="offset-md-2 col-md-8">
+                    <a onclick="enviar()" class="btn btn-success float-right" href="#">Enviar</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
