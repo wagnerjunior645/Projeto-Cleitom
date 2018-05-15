@@ -12,7 +12,13 @@ int pinLed5 = 5;
 int pinLed6 = 6;
 int pinLed7 = 7;
 
-int ledArray[] = { pinLed3, pinLed4, pinLed5, pinLed6, pinLed7 };
+String ledArray[5][3] = {
+    {"l3","3","0"},
+    {"l4","4","0"},
+    {"l5","5","0"},
+    {"l6","6","0"},
+    {"l7","7","0"}
+};
 
 
 //Criando o Servo
@@ -68,7 +74,7 @@ void loop(){
     if(Serial.available() > 0){
         char c = Serial.read();
         while(1){
-            if(c == "$"){
+            if(c == '$'){
                 break;
             }else{
                 text = text + c;
@@ -84,7 +90,7 @@ void loop(){
     }
 
     if(estadoEmergencia == 1){
-
+        
     }else{
 
     }
@@ -107,8 +113,65 @@ String integerToString(int value){
 
     if (value == 1) {
         return "1";
-    } else {
+    }else if (value == 2) {
+        return "2";
+    }else if (value == 3) {
+        return "3";
+    }else if (value == 4) {
+        return "4";
+    }else if (value == 5) {
+        return "5";
+    }else if (value == 6) {
+        return "6";
+    }else if (value == 7) {
+        return "7";
+    }else {
         return "0";
     }
 
 }
+
+int stringToInteger(String value){
+
+    if(value == "0"){
+        return 0;
+    }else if (value == "1") {
+        return 1;
+    }else if (value == "2") {
+        return 2;
+    }else if (value == "3") {
+        return 3;
+    }else if (value == "4") {
+        return 4;
+    }else if (value == "5") {
+        return 5;
+    }else if (value == "6") {
+        return 6;
+    }else if (value == "7") {
+        return 7;
+    }else{
+        return -1;
+    }
+
+}
+
+//Funcao que irá executar a acao baseado nas strings passadas
+int executarAcao(String acao){
+
+    if(acao == "ce"){
+
+    }else if (acao == "l4") {
+
+    }
+
+    return 1;
+}
+
+
+//LEGENDAS PARA AS ACOES
+
+//l30 = LED 3 Desligar = 0
+//l31 = LED 3 Ligar = 1
+//ce = CANCELAR ESTADO DE EMERGENCIA
+//sm = SERVOMOTOR
+//pi = ping para retornar uma funcao relatorio

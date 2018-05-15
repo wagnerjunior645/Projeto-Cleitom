@@ -125,7 +125,7 @@ io.emit('some event', { for: 'everyone' });
 
 io.on('connection', function (socket) {
 
-    console.log('a user connected');
+    console.log('Usuario Conectado ao Socket');
 
     /* myPort.on("data", function (data) {
         socket.broadcast.emit("msg", data);
