@@ -39,6 +39,8 @@ int pinSensorTemperatura;
 
 //Variaveis Geral
 int isModified = 0;//Default = false no caso 0
+int estadoEmergencia = 0;
+String text = "";
 
 void setup(){
 
@@ -55,6 +57,37 @@ void setup(){
 }
 
 void loop(){
+
+    if(isModified == 1){
+        relatorioGeral();
+        isModified = 0;
+    }
+
+    text = "";
+
+    if(Serial.available() > 0){
+        char c = Serial.read();
+        while(1){
+            if(c == "$"){
+                break;
+            }else{
+                text = text + c;
+            }
+        }
+    }
+
+    //Se servidor enviar CE ele vai cancelar o estado de emergencia
+    //Do COntrario vai continuar para o if abaixo
+
+    if(text == "ce"){
+        estadoEmergencia = 0;
+    }
+
+    if(estadoEmergencia == 1){
+
+    }else{
+
+    }
 
 }
 
