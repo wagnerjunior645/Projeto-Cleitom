@@ -13,14 +13,21 @@ var myPort = new SerialPort(portaUsb, {
 
 myPort.on("open",(err)=>{
     console.log("Abriu connection com Arduino")
+    setTimeout(()=>{
+        myPort.write("wagner&");
+    },5000)
 })
+
+//myPort.write("wagnern");
 
 myPort.on("data",(data)=>{
 
+    //myPort.write("wagner$");
+
     console.log(`Arduino enviando: ${data}`);
 
-    var buf = Buffer.from("wagner", 'utf8');
+    //var buf = Buffer.from("wagner", 'utf8');
 
-    myPort.write(buf);
+    //myPort.write(buf);
 
 })
