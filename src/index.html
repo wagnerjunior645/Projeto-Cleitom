@@ -54,7 +54,7 @@
             padding: 5px;
         }
 
-        .msg-eu{
+        .msg-eu {
             text-align: right;
         }
 
@@ -62,7 +62,6 @@
             background-color: #efefef;
             text-align: left;
         }
-
     </style>
 
     <script>
@@ -74,6 +73,10 @@
             $("#chatBody")[0].innerHTML += `<p class="msg-outro">${msg}</p>`;
             console.log("ddd");
 
+        });
+
+        socket.on('arduino', function (msg) {
+            
         });
 
         function enviar() {
@@ -97,7 +100,7 @@
         <div class="container">
             <div class="row chat">
                 <div id="chatBody" class="offset-md-2 col-md-8 chat-body">
-                    
+
                 </div>
                 <div id="chatMsg" class="offset-md-2 col-md-8 chat-footer" contentEditable="true" placeholder="Digite uma MSG...">
                 </div>

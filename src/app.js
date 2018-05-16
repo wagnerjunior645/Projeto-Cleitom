@@ -133,10 +133,25 @@ io.on('connection', function (socket) {
 
     socket.on('msg', function (msg) {
 
-        console.log(`User MSG: ${msg}`);
+        let explodida = msg.split(";")
+        //l31;token.token.token
 
-        socket.broadcast.emit("msg", msg);
+        jwt.verify(explodida[1],privateKey,(err)=>{
+            if(err){
+                return;
+            }
 
+            console.log(`User MSG: ${msg}`);
+
+            socket.broadcast.emit("msg", msg);
+
+        })
+
+    });
+
+    //Canal usado apenas para comunicacao com o arduino
+    socket.on('arduino', function (msg) {
+        
     });
 
     socket.on('disconnect', function () {

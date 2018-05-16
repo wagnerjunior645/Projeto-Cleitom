@@ -1,8 +1,11 @@
-import { SSL_OP_SINGLE_DH_USE } from "constants";
 
 //Incluimos a livraria servo.h
 #include <Servo.h>
 
+//Sensor temperatura
+#include <dht.h>
+#define dht_dpin A1 //Pino DATA do Sensor ligado na porta Analogica A1
+dht DHT; //Inicializa o sensor
 
 int pinServo = 9;
 int pinSensorMov = 7;
@@ -13,6 +16,10 @@ int pinLed5 = 5;
 int pinLed6 = 6;
 int pinLed7 = 7;
 
+//Array de String em que o primeiro
+//linha 0 = nome das leds
+//linha 1 = porta digital da led
+//linha 2 = estado da led ligada ou desligada
 String ledArray[5][3] = {
     {"l3","3","0"},
     {"l4","4","0"},
@@ -25,7 +32,7 @@ String ledArray[5][3] = {
 //Criando o Servo
 //Criando o Objeto Servo
 Servo myservo;
-int portaoFechado = 2; //Angulo Inicial
+int portaoFechado = 5; //Angulo Inicial
 int portaoAberto = 80; //Angulo Final
 int servoAtualPosicao = portaoFechado;
 //Fim Criando Servo
@@ -46,7 +53,9 @@ int pinSensorTemperatura;
 
 //Variaveis Geral
 int isModified = 0;//Default = false no caso 0
-int estadoEmergencia = 0;
+int estadoEmergencia = 0;//Estado de emergencia desligado
+float temperatura = 0;//Varial para temperatura
+
 String text = "";
 
 void setup(){
@@ -55,6 +64,7 @@ void setup(){
     myservo.attach(pinServo);  // Selecionamos o pino 9 como o pino de controlo para o servo 
     pinMode(pinSensorMov, INPUT); //Setar o pino 7 para o sensor de movimento
 
+    //Zerando todas as leds
     pinMode(pinLed3, OUTPUT);
     pinMode(pinLed4, OUTPUT);
     pinMode(pinLed5, OUTPUT);
@@ -72,6 +82,7 @@ void loop(){
 
     text = "";
 
+    //Se for passado algum coomando para o arduino
     if(Serial.available() > 0){
         char c = Serial.read();
         while(1){
@@ -83,17 +94,39 @@ void loop(){
         }
     }
 
-    //Se servidor enviar CE ele vai cancelar o estado de emergencia
-    //Do COntrario vai continuar para o if abaixo
-
-    if(text == "ce"){
-        estadoEmergencia = 0;
+    //Verificar se algum comando foi passado parao arduino
+    if(text != ""){
+        executarAcao(text);
     }
 
-    if(estadoEmergencia == 1){
+    //Vai sempre executar essa funcao
+    //execucaoConstante();
 
-    }else{
+}
 
+//funcao para leitura de temperatura
+float lerTemperatura(){
+
+    DHT.read11(dht_dpin); //Lê as informações do sensor
+    float f = DHT.temperature;
+    return f;
+
+}
+
+//Funcao responsavel por manter as leds ligadas void
+//quando as leds recebem sinal auto ele sempre fica auto
+//nao precisa executar sempre
+void execucaoConstante(){
+    //ledArray
+    int x = 5;
+    int y = 3;
+    int i;
+    int j;
+
+    for(i = 0; i < x; i++){
+        int pino = stringToInteger(ledArray[i][1]);
+        int saida = stringToInteger(ledArray[i][2]);
+        digitalWrite(pino, saida);
     }
 
 }
@@ -168,20 +201,6 @@ int executarAcao(String acao){
     return 1;
 }
 
-//Essa funcao vai estar sempre ligada para os leds não piscarem
-
-int leds(){
-
-    int i;
-
-    for(i = 0; i < ;i++){
-
-    }
-
-    return 1;
-}
-
-
 //LEGENDAS PARA AS ACOES
 
 //l30 = LED 3 Desligar = 0
@@ -189,3 +208,6 @@ int leds(){
 //ce = CANCELAR ESTADO DE EMERGENCIA
 //sm = SERVOMOTOR
 //pi = ping para retornar uma funcao relatorio
+
+//sizeof(a) / sizeof(int); <--> para ver o tamanho do array
+
