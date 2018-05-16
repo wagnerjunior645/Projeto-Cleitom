@@ -53,7 +53,8 @@ int pinSensorTemperatura;
 
 //Variaveis Geral
 int isModified = 0;//Default = false no caso 0
-int estadoEmergencia = 0;//Estado de emergencia desligado
+int estadoEmergenciaIncendio = 0;//Estado de emergencia Incendio desligado
+int estadoEmergenciaInvasao = 0;//Estado de emergencia Invasao desligado
 float temperatura = 0;//Varial para temperatura
 
 String text = "";
@@ -81,7 +82,6 @@ void loop(){
     }
 
     text = "";
-
     //Se for passado algum coomando para o arduino
     if(Serial.available() > 0){
         char c = Serial.read();
@@ -99,9 +99,6 @@ void loop(){
         executarAcao(text);
     }
 
-    //Vai sempre executar essa funcao
-    //execucaoConstante();
-
 }
 
 //funcao para leitura de temperatura
@@ -109,6 +106,11 @@ float lerTemperatura(){
 
     DHT.read11(dht_dpin); //Lê as informações do sensor
     float f = DHT.temperature;
+
+    if(f > 30){
+        estadoEmergenciaIncendio = 1;
+    }
+
     return f;
 
 }
@@ -190,24 +192,71 @@ int stringToInteger(String value){
 }
 
 //Funcao que irá executar a acao baseado nas strings passadas
-int executarAcao(String acao){
+void executarAcao(String acao){
 
-    if(acao == "ce"){
+    isModified = 1;
 
-    }else if (acao == "l4") {
+    if(acao == "ce1"){
+
+    }else if (acao == "ce2") {
 
     }
 
-    return 1;
+    if(acao == "sm0"){
+
+    }else if (acao == "sm1") {
+
+    }
+
+    //split string
+    String tempChar0 = "";
+    tempChar0 = tempChar0 + acao.charAt(0);
+
+    if(tempChar0 == 'l'){
+
+        String tempChar1 = "";
+        String tempChar2 = "";
+
+        tempChar1 = tempChar1 + acao.charAt(1);
+        tempChar2 = tempChar2 + acao.charAt(2);
+
+        int pino = stringToInteger(tempChar1);
+        int saida = stringToInteger(tempChar2);
+
+        digitalWrite(pino, saida);
+
+        int x = 5;
+        int i;
+
+        for(i = 0; i < x; i++){
+            if(ledArray[i][1] == tempChar1){
+                ledArray[i][2] = tempChar2;
+            }
+        }
+
+    }
+
+    
+
 }
 
 //LEGENDAS PARA AS ACOES
 
 //l30 = LED 3 Desligar = 0
 //l31 = LED 3 Ligar = 1
-//ce = CANCELAR ESTADO DE EMERGENCIA
-//sm = SERVOMOTOR
-//pi = ping para retornar uma funcao relatorio
 
+//---------- ce CANCELAR ESTADO DE EMERGENCIA ----------
+//ce1 = estado de emergencia temperatura
+//ce2 = estado de emergencia sinal de movimento
+
+//---------- sm = SERVOMOTOR ----------
+//sm1 = servo motor portao abrir
+//sm0 = servo motor portao fechar
+
+//pi = ping para retornar a funcao relatorioGeral()
+
+
+
+//----------- Anotacoes -----------
 //sizeof(a) / sizeof(int); <--> para ver o tamanho do array
 
