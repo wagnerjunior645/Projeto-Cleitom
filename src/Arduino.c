@@ -62,10 +62,11 @@ String text = "";
 void setup(){
 
     Serial.begin(9600);
+    
     myservo.attach(pinServo);  // Selecionamos o pino 9 como o pino de controlo para o servo 
     pinMode(pinSensorMov, INPUT); //Setar o pino 7 para o sensor de movimento
 
-    //Zerando todas as leds
+    //Zerando todas as leds e as setando
     pinMode(pinLed3, OUTPUT);
     pinMode(pinLed4, OUTPUT);
     pinMode(pinLed5, OUTPUT);
@@ -76,10 +77,10 @@ void setup(){
 
 void loop(){
 
-    if(isModified == 1){
-        relatorioGeral();
-        isModified = 0;
-    }
+    //if(isModified == 1){
+    //    relatorioGeral();
+    //    isModified = 0;
+    //}
 
     text = "";
     //Se for passado algum coomando para o arduino
@@ -94,10 +95,31 @@ void loop(){
         }
     }
 
-    //Verificar se algum comando foi passado parao arduino
+    //Depois acrescentar temperatura
+    //Que irá entrar em emergencia
+
+    //float temperatura = lerTemperatura();
+
+    //Verificar se algum comando foi passado para o arduino
     if(text != ""){
         executarAcao(text);
     }
+
+    if(estadoEmergenciaIncendio == 1 || estadoEmergenciaInvasao == 1){
+        estadoDeEmergenciaLigar();
+    }
+
+    //Enviar para o servidor as insformacoes
+    relatorioGeral();
+
+    delay(1500);
+
+}
+
+void moverServo(int position){
+
+    servoAtualPosicao = position;
+    myservo.write(pos);
 
 }
 
@@ -113,6 +135,43 @@ float lerTemperatura(){
 
     return f;
 
+}
+
+//Funcao usada para ligas e desligar todas as leds no array
+void ledOnOff(int value){
+
+    int x = 5;
+    int i;
+
+    for(i = 0; i < x; i++){
+        int pino = stringToInteger(ledArray[i][1]);
+        int saida = stringToInteger(ledArray[i][2]);
+        digitalWrite(pino, value);
+        ledArray[i][2] = value;
+    }
+
+}
+
+void estadoDeEmergenciaLigar(){
+
+    int i;
+
+    for(i = 0; i<3 ;i++){
+        ledOnOff(1);
+        delay(300);
+        ledOnOff(0);
+        delay(300);
+    }
+
+    ledOnOff(1);
+    delay(1000);
+    ledOnOff(0);
+
+}
+
+//Cancelar Estado de Emergencia apagas todas as leds
+void desligarEstadoDeEmergencia(){
+    ledOnOff(0);
 }
 
 //Funcao responsavel por manter as leds ligadas void
@@ -136,13 +195,37 @@ void execucaoConstante(){
 //Essa funcao vai ser responsavel por passar os valores das variaveis para o Servidor para
 //Parear todas os usuarios
 
-int relatorioGeral(){
+void relatorioGeral(){
 
     String result = "";
+    String final = "";
 
-    int resultado = digitalRead(3);
+    if(servoAtualPosicao == portaoAberto){
+        result = "sm1";
+    }else{
+        result = "sm0";
+    }
 
-    return 0;
+    final = final + result + ";"
+
+    //forcar passar float to int
+    int temperatura = (int)lerTemperatura();
+
+    //numero float com 0 casas decimais
+    result = "tp" + String(temperatura);
+
+    final = final + result + ";"
+
+    //relatorios das leds
+    int i;
+
+    for(i = 0; i < x; i++){
+        result = ledArray[i][0];
+        result = result + ledArray[i][2];
+        result = result + ";";
+        final = final + result;
+    }
+
 }
 
 String integerToString(int value){
@@ -196,23 +279,35 @@ void executarAcao(String acao){
 
     isModified = 1;
 
-    if(acao == "ce1"){
-
-    }else if (acao == "ce2") {
-
+    //em teoria so podera vir 0 para desligar
+    if(acao == "ct0"){
+        estadoEmergenciaIncendio = 0;
+        desligarEstadoDeEmergencia();
+        return;
     }
 
+    //em teoria so podera vir 0 para desligar
+    if(acao == "cm0"){
+        estadoEmergenciaInvasao = 0;
+        desligarEstadoDeEmergencia();
+        return;
+    }
+
+    //0 baixar portao
+    //1 levantar portao
     if(acao == "sm0"){
-
+        moverServo(portaoFechado);
+        return;
     }else if (acao == "sm1") {
-
+        moverServo(portaoAberto);
+        return;
     }
 
     //split string
     String tempChar0 = "";
     tempChar0 = tempChar0 + acao.charAt(0);
 
-    if(tempChar0 == 'l'){
+    if(tempChar0 == "l"){
 
         String tempChar1 = "";
         String tempChar2 = "";
@@ -246,8 +341,8 @@ void executarAcao(String acao){
 //l31 = LED 3 Ligar = 1
 
 //---------- ce CANCELAR ESTADO DE EMERGENCIA ----------
-//ce1 = estado de emergencia temperatura
-//ce2 = estado de emergencia sinal de movimento
+//ct0 = estado de emergencia temperatura/incendio Desligado
+//cm0 = estado de emergencia sinal de movimento Desligadok
 
 //---------- sm = SERVOMOTOR ----------
 //sm1 = servo motor portao abrir
@@ -255,8 +350,13 @@ void executarAcao(String acao){
 
 //pi = ping para retornar a funcao relatorioGeral()
 
+//tp[float temparature] == variavel que vai representar a temperatura
 
 
 //----------- Anotacoes -----------
 //sizeof(a) / sizeof(int); <--> para ver o tamanho do array
 
+
+//jkdjflsjkldf
+//ccc
+//xD
