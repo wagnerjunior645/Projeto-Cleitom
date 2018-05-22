@@ -226,6 +226,8 @@ void relatorioGeral(){
         final = final + result;
     }
 
+    Serial.println(final);
+
 }
 
 String integerToString(int value){

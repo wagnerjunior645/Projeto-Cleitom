@@ -133,11 +133,23 @@ io.on('connection', function (socket) {
 
     socket.on('msg', function (msg) {
 
-        let explodida = msg.split(";")
+        //let explodida = msg.split(";")
         //l31;token.token.token
+        let token = "";
+        let msg = "";
 
-        jwt.verify(explodida[1],privateKey,(err)=>{
-            if(err){
+        try {
+            jsonMsg = JSON.parse(msg);
+        } catch (err) {
+            console.log("Error");
+            return;
+        }
+
+        token = jsonMsg.token;
+        msg = jsonMsg.msg;
+
+        jwt.verify(token, privateKey, (err) => {
+            if (err) {
                 return;
             }
 
@@ -145,14 +157,25 @@ io.on('connection', function (socket) {
 
             socket.broadcast.emit("msg", msg);
 
+            myPort.write(`${msg}$`);
+
         })
 
     });
 
-    //Canal usado apenas para comunicacao com o arduino
-    socket.on('arduino', function (msg) {
-        
+    myPort.on("data", function (data) {
+        socket.broadcast.emit("msg", data);
     });
+
+    //Canal usado apenas para comunicacao com o arduino
+    //para escutar o arduino
+    /* socket.on('arduino', function () {
+
+        myPort.on("data", function (data) {
+            socket.broadcast.emit("msg", data);
+        });
+
+    }); */
 
     socket.on('disconnect', function () {
         console.log('user disconnected');
