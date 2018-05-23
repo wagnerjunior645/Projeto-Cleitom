@@ -117,6 +117,7 @@ app.get("/home", (req, res) => {
 app.get("/testando", (req, res) => {
     res.sendFile(__dirname + "/views/testando.html")
 });
+
 //Fim Rotas
 
 
@@ -131,15 +132,13 @@ io.on('connection', function (socket) {
         socket.broadcast.emit("msg", data);
     }); */
 
-    socket.on('msg', function (msg) {
+    socket.on('msg', function (inputMsg) {
 
-        //let explodida = msg.split(";")
-        //l31;token.token.token
         let token = "";
         let msg = "";
 
         try {
-            jsonMsg = JSON.parse(msg);
+            jsonMsg = JSON.parse(inputMsg);
         } catch (err) {
             console.log("Error");
             return;
@@ -150,12 +149,11 @@ io.on('connection', function (socket) {
 
         jwt.verify(token, privateKey, (err) => {
             if (err) {
+                console.log(`Error ao decodificar o token`);
                 return;
             }
 
-            console.log(`User MSG: ${msg}`);
-
-            socket.broadcast.emit("msg", msg);
+            console.log(`Enviando para o Arduino: ${msg}`);
 
             myPort.write(`${msg}$`);
 
@@ -164,7 +162,7 @@ io.on('connection', function (socket) {
     });
 
     myPort.on("data", function (data) {
-        socket.broadcast.emit("msg", data);
+        socket.broadcast.emit("arduino", data);
     });
 
     //Canal usado apenas para comunicacao com o arduino

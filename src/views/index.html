@@ -20,7 +20,6 @@
     <script src="/socket.io/socket.io.js"></script>
 
     <style>
-        
     </style>
 
     <script>
@@ -33,6 +32,28 @@
             console.log("ddd");
 
         });
+
+        socket.on('arduino', function (value) {
+
+            let arrayJson = [];
+
+            let array = value.split(";");
+
+            for(let string of array){
+
+                if(string.trim != ""){
+                    arrayJson.push( { key: string.trim().substring(0,1), value: string.trim().substring(0,string.length) } );
+                }
+
+            }
+
+            render(arrayJson);
+
+        });
+
+        function render(arrayJson) {
+
+        }
 
         function enviar() {
 
@@ -70,7 +91,7 @@
             </div>
         </nav>
     </header>
-    
+
     <main>
         <div class="container">
             <div class="row chat">
@@ -84,6 +105,25 @@
                 </div>
             </div>
         </div>
+
+        <!-- Conteudo Principal da Página -->
+
+        <div class="container-fluid">
+            <div class="container">
+
+                <div class="row">
+                    <h3>Painel de Opções Usuário</h3>
+                </div>
+
+                <div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Fim  Conteudo Principal da Página -->
+
     </main>
 
     <footer>
