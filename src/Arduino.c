@@ -3,9 +3,10 @@
 #include <Servo.h>
 
 //Sensor temperatura
-#include <dht.h>
-#define dht_dpin A1 //Pino DATA do Sensor ligado na porta Analogica A1
-dht DHT; //Inicializa o sensor
+#include "DHT.h"
+#define DHTPIN A1 // pino que estamos conectado
+#define DHTTYPE DHT11 // DHT 11
+DHT dht(DHTPIN, DHTTYPE);
 
 int pinServo = 9;
 int pinSensorMov = 7;
@@ -119,21 +120,38 @@ void loop(){
 void moverServo(int position){
 
     servoAtualPosicao = position;
-    myservo.write(pos);
+    myservo.write(position);
 
 }
 
 //funcao para leitura de temperatura
 float lerTemperatura(){
 
-    DHT.read11(dht_dpin); //Lê as informações do sensor
-    float f = DHT.temperature;
+    //DHT.read11(dht_dpin); //Lê as informações do sensor
+    float f = dht.readTemperature();
+
+    if(isnan(f)){
+      f = 0;
+    }
 
     if(f > 30){
         estadoEmergenciaIncendio = 1;
     }
 
     return f;
+
+}
+
+float lerHumidade(){
+
+    //DHT.read11(dht_dpin); //Lê as informações do sensor
+    float h = dht.readHumidity();
+
+    if(isnan(h)){
+      h = 1000;
+    }
+
+    return h;
 
 }
 
@@ -206,7 +224,7 @@ void relatorioGeral(){
         result = "sm0";
     }
 
-    final = final + result + ";"
+    final = final + result + ";";
 
     //forcar passar float to int
     int temperatura = (int)lerTemperatura();
@@ -214,10 +232,15 @@ void relatorioGeral(){
     //numero float com 0 casas decimais
     result = "tp" + String(temperatura);
 
-    final = final + result + ";"
+    final = final + result + ";" ;
+
+    //relatorio estados de emergencia
+    final = final + "ct" +String(estadoEmergenciaIncendio) + ";";
+    final = final + "cm" +String(estadoEmergenciaInvasao) + ";";
 
     //relatorios das leds
     int i;
+    int x = 5;
 
     for(i = 0; i < x; i++){
         result = ledArray[i][0];
@@ -345,6 +368,10 @@ void executarAcao(String acao){
 //---------- ce CANCELAR ESTADO DE EMERGENCIA ----------
 //ct0 = estado de emergencia temperatura/incendio Desligado
 //cm0 = estado de emergencia sinal de movimento Desligadok
+
+//Ligar alarme para que o sinal de movimento possa comecar a funcionar
+//al0 = alarme desligado
+//al1 = alarme ligado
 
 //---------- sm = SERVOMOTOR ----------
 //sm1 = servo motor portao abrir
