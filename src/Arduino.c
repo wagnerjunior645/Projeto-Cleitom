@@ -56,7 +56,7 @@ int pinSensorTemperatura;
 int isModified = 0;//Default = false no caso 0
 int estadoEmergenciaIncendio = 0;//Estado de emergencia Incendio desligado
 int estadoEmergenciaInvasao = 0;//Estado de emergencia Invasao desligado
-float temperatura = 0;//Varial para temperatura
+int estadoAlarme = 0;//Estado de alarme para detectar movimento pela casa inicio desligado
 
 String text = "";
 
@@ -86,13 +86,17 @@ void loop(){
     text = "";
     //Se for passado algum coomando para o arduino
     if(Serial.available() > 0){
-        char c = Serial.read();
+        char c = 'a';
         while(1){
+
+            c = Serial.read();
+
             if(c == '$'){
                 break;
             }else{
                 text = text + c;
             }
+
         }
     }
 
@@ -315,6 +319,12 @@ void executarAcao(String acao){
     if(acao == "cm0"){
         estadoEmergenciaInvasao = 0;
         desligarEstadoDeEmergencia();
+        return;
+    }
+
+    //Travar todas as acoes que  nao seja desligar estados de emergencia
+    //caso algumas delas estejam ativadas ou ligadas
+    if(estadoEmergenciaIncendio == 1 || estadoEmergenciaInvasao == 1){
         return;
     }
 

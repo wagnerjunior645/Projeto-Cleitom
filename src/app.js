@@ -20,13 +20,17 @@ const bodyParser = require('body-parser');
 let serialport = require("serialport");
 let SerialPort = serialport.SerialPort;
 
-let myPort = new SerialPort("COM4", {
-    baudrate: 9600,
+let portaUSB = "COM3";
+let baudrate = 9600;
+let myPort = new SerialPort(portaUSB, {
+    baudrate: baudrate,
     parser: serialport.parsers.readline("\n")
 });
 
 myPort.on("open", function () {
-    console.log("ARDUINO CONECTADO");
+    console.log("\nARDUINO CONECTADO");
+    console.log(`Porta USB: ${portaUSB}`);
+    console.log(`Velocidade Porta Serial: ${9600}\n`);
 })
 
 const os = require('os');
@@ -162,7 +166,9 @@ io.on('connection', function (socket) {
     });
 
     myPort.on("data", function (data) {
-        socket.broadcast.emit("arduino", data);
+        console.log("recebendo");
+        console.log("\n")
+        //socket.broadcast.emit("arduino", data);
     });
 
     //Canal usado apenas para comunicacao com o arduino
@@ -189,6 +195,5 @@ http.listen(porta, function () {
     console.log(`Server On Rodando na porta ${porta}`);
 });
 
-let numeroStance = process.env.NODE_APP_INSTANCE | 1;
-
-console.log(`NODE STANCE: ${process.env.NODE_APP_INSTANCE} + ${numeroStance}`);
+//let numeroStance = process.env.NODE_APP_INSTANCE | 1;
+//console.log(`NODE STANCE: ${process.env.NODE_APP_INSTANCE} + ${numeroStance}`);

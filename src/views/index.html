@@ -14,6 +14,7 @@
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/popper.js/dist/umd/popper.min.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.cookie.js"></script>
 
     <script src="/js/main.js"></script>
 
@@ -42,10 +43,12 @@
             for(let string of array){
 
                 if(string.trim != ""){
-                    arrayJson.push( { key: string.trim().substring(0,1), value: string.trim().substring(0,string.length) } );
+                    arrayJson.push( { key: string.trim().substring(0,2), value: string.trim().substring(2,string.length) } );
                 }
 
             }
+
+            console.log(arrayJson)
 
             render(arrayJson);
 
@@ -61,7 +64,7 @@
 
             if (chat.innerHTML.trim() != "") {
                 $("#chatBody")[0].innerHTML += `<p class="msg-eu">${chat.innerHTML.trim()}</p>`;
-                socket.emit('msg', chat.innerHTML.trim());
+                socket.emit('msg', JSON.stringify({msg: chat.innerHTML.trim(), token: $.cookie("token")}));
                 chat.innerHTML = "";
             }
 
