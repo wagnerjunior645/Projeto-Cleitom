@@ -25,12 +25,18 @@
 
     <script>
 
+        let spanModal = true;
+        //A cada 10 segundos ele volta a habilitar o modal a variavel spanModal
+        setInterval(function () {
+            spanModal = true;
+        }, 7000);
+
         var socket = io();
 
         socket.on('msg', function (msg) {
 
             $("#chatBody")[0].innerHTML += `<p class="msg-outro">${msg}</p>`;
-            console.log("ddd");
+            //console.log("ddd");
 
         });
 
@@ -38,23 +44,89 @@
 
             let arrayJson = [];
 
-            let array = value.split(";");
+            let arrayhh = [];arrayhh.push(value)
+            //console.log(arrayhh)
 
-            for(let string of array){
+            let array = arrayhh[0].split(";");
 
-                if(string.trim != ""){
-                    arrayJson.push( { key: string.trim().substring(0,2), value: string.trim().substring(2,string.length) } );
+            for (let string of array) {
+
+                if (string.trim != "") {
+                    arrayJson.push({ key: string.trim().substring(0, 2), value: string.trim().substring(2, string.length) });
                 }
 
             }
 
-            console.log(arrayJson)
+            //console.log(arrayJson)
 
             render(arrayJson);
 
         });
 
         function render(arrayJson) {
+
+            //Setando temperatura e humidade
+            document.getElementById("span_temperatura").innerHTML = arrayJson.filter((json) => {
+                return json.key == "tp"
+            })[0].value + " C°";
+
+            document.getElementById("span_humidade").innerHTML = arrayJson.filter((json) => {
+                return json.key == "hm"
+            })[0].value + " %";
+
+            //portao
+
+            let portao = arrayJson.filter(json => {
+                return json.key == "sm";
+            });
+
+            let portaoElemento = document.getElementById("sm");
+            $(portaoElemento).attr("data-value",portao[0].value)
+            setLigarDesligar(portaoElemento, portao[0].value);
+
+            //alarmeTemperatura
+
+             portao = arrayJson.filter(json => {
+                return json.key == "at";
+            });
+
+             portaoElemento = document.getElementById("at");
+            $(portaoElemento).attr("data-value",portao[0].value)
+            setLigarDesligar(portaoElemento, portao[0].value);
+
+            //alarmeMovimento
+
+             portao = arrayJson.filter(json => {
+                return json.key == "am";
+            });
+
+             portaoElemento = document.getElementById("am");
+            $(portaoElemento).attr("data-value",portao[0].value)
+            setLigarDesligar(portaoElemento, portao[0].value);
+
+            //Percorrendo leds
+
+            let arrayLeds = arrayJson.filter(json => {
+                return json.key.substring(0, 1) == "l";
+            });
+
+            // console.log(arrayLeds)
+
+            for (let a of arrayLeds) {
+                let elemento = document.getElementById(a.key);
+                $(elemento).attr("data-value", a.value);
+                setLigarDesligar(elemento, a.value);
+            }
+
+        }
+
+        function setLigarDesligar(elemento, dataValue) {
+
+            if (dataValue == 1) {
+                $(elemento.firstElementChild).removeClass("desligado").addClass("ligado");
+            } else {
+                $(elemento.firstElementChild).removeClass("ligado").addClass("desligado");
+            }
 
         }
 
@@ -64,7 +136,7 @@
 
             if (chat.innerHTML.trim() != "") {
                 $("#chatBody")[0].innerHTML += `<p class="msg-eu">${chat.innerHTML.trim()}</p>`;
-                socket.emit('msg', JSON.stringify({msg: chat.innerHTML.trim(), token: $.cookie("token")}));
+                socket.emit('msg', JSON.stringify({ msg: chat.innerHTML.trim(), token: $.cookie("token") }));
                 chat.innerHTML = "";
             }
 
@@ -90,6 +162,19 @@
                             <span class="sr-only">(current)</span>
                         </a>
                     </li>
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Temperatura:
+                            <span id="span_temperatura"></span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Humidade:
+                            <span id="span_humidade"></span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </nav>
@@ -114,11 +199,96 @@
         <div class="container-fluid">
             <div class="container">
 
-                <div class="row">
-                    <h3>Painel de Opções Usuário</h3>
+                <div class="row margin-bottom">
+                    <div class="col-md-12 text-center header-button">
+                        <h3>Painel de Leds</h3>
+                    </div>
+
+                    <div id="l3" class="col-md-3 col-6 text-center apertou" data-value="0">
+                        <div class="button-option rounded-circle desligado">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer">Led-3</span>
+                        </div>
+                    </div>
+
+                    <div id="l4" class="col-md-3 col-6 text-center apertou" data-value="0">
+                        <div class="button-option rounded-circle desligado">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer">Led-4</span>
+                        </div>
+                    </div>
+
+                    <div id="l5" class="col-md-3 col-6 text-center apertou" data-value="0">
+                        <div class="button-option rounded-circle desligado">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer">Led-5</span>
+                        </div>
+                    </div>
+
+                    <div id="l6" class="col-md-3 col-6 text-center apertou" data-value="0">
+                        <div class="button-option rounded-circle desligado">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer">Led-6</span>
+                        </div>
+                    </div>
+
+                    <div id="l7" class="col-md-3 col-6 text-center apertou" data-value="0">
+                        <div class="button-option rounded-circle desligado">
+                            <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer">Led-7</span>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="container">
+
+                <div class="row margin-bottom">
+
+                    <div class="col-md-12 text-center header-button">
+                        <h3>Painel do Portão e Outros...</h3>
+                    </div>
+
+                    <div id="sm" class="col-md-6 col-12 text-center apertou" data-value="0">
+                        <div class="button-option-g rounded-circle desligado">
+                            <i class="fa fa-cogs" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer-g">Portão Automático</span>
+                        </div>
+                    </div>
+
+                    <div id="at" class="col-md-6 col-12 text-center apertou" data-value="0">
+                        <div class="button-option-g rounded-circle desligado">
+                            <i class="fa fa-thermometer-full" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer-g">Alarme Icêndio</span>
+                        </div>
+                    </div>
+
+                    <div id="am" class="col-md-6 col-12 text-center apertou" data-value="0">
+                        <div class="button-option-g rounded-circle desligado">
+                            <i class="fa fa-bullhorn" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <span class="button-option-footer-g">Alarme Segurança</span>
+                        </div>
+                    </div>
 
                 </div>
 
@@ -126,6 +296,33 @@
         </div>
 
         <!-- Fim  Conteudo Principal da Página -->
+
+        <!-- Modal -->
+        <!-- Button trigger modal -->
+        <button hidden id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            Launch demo modal
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">AVISO URGENTE</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary">Ignorar Alarme</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fim Modal -->
 
     </main>
 

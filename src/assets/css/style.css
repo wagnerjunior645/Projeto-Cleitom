@@ -54,3 +54,75 @@ div[contenteditable=true] {
     background-color: #efefef;
     text-align: left;
 }
+
+
+h3{
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 5px;
+    border-bottom: solid 3px #007bff;
+    display: inline-block;
+}
+
+.button-option{
+    background-color: #808080;
+    width: 100px;
+    height: 100px;
+    padding: 25px;
+    padding-top: 15px;
+    text-align: center;
+    font-size: 50px;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.button-option:active{
+    background-color: #2d2d2d;
+}
+
+.button-option-g{
+    background-color: #808080;
+    width: 200px;
+    height: 200px;
+    padding: 50px;
+    padding-top: 30px;
+    text-align: center;
+    font-size: 100px;
+    cursor: pointer;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.button-option-g:active{
+    background-color: #2d2d2d;
+}
+
+.ligado{
+    color: #ffed00;
+}
+
+.desligado{
+    color: black;
+}
+
+.button-option-footer{
+    font-weight: bold;
+}
+
+.button-option-footer-g{
+    font-weight: bold;
+    font-size: 150%;
+}
+
+.header-button{
+    margin-bottom: 30px;
+}
+
+.margin-bottom{
+    margin-bottom: 40px;
+}
+
+.apertou{
+    margin-bottom: 40px;
+}

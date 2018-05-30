@@ -56,6 +56,10 @@ const io = require("socket.io")(http);
 
 //Rotas
 
+app.get("/", (req, res) => {
+    res.redirect("/login");
+});
+
 app.get("/login", (req, res) => {
     res.sendFile(__dirname + "/views/login.html")
 });
@@ -166,9 +170,9 @@ io.on('connection', function (socket) {
     });
 
     myPort.on("data", function (data) {
-        console.log("recebendo");
+        console.log(data);
         console.log("\n")
-        //socket.broadcast.emit("arduino", data);
+        socket.broadcast.emit("arduino", data);
     });
 
     //Canal usado apenas para comunicacao com o arduino

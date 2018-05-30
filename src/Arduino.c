@@ -58,6 +58,9 @@ int estadoEmergenciaIncendio = 0;//Estado de emergencia Incendio desligado
 int estadoEmergenciaInvasao = 0;//Estado de emergencia Invasao desligado
 int estadoAlarme = 0;//Estado de alarme para detectar movimento pela casa inicio desligado
 
+int alarmeTemperatura = 0;//alarme de incendio se vai habilitar ou nao
+int alarmeMovimento = 0;//Alarme se vai ser habilitado ou nao
+
 String text = "";
 
 void setup(){
@@ -128,6 +131,15 @@ void moverServo(int position){
 
 }
 
+//funcao responsavel por detectr o movimento se o arme estiver ligado
+void detectarMovimento(){
+
+    if(alarmeMovimento == 1){
+
+    }
+
+}
+
 //funcao para leitura de temperatura
 float lerTemperatura(){
 
@@ -138,7 +150,8 @@ float lerTemperatura(){
       f = 0;
     }
 
-    if(f > 30){
+    //Se o alarme temperatura estiver ligado ai sim coloca em estado de emergencia
+    if(f > 30 && alarmeTemperatura == 1){
         estadoEmergenciaIncendio = 1;
     }
 
@@ -230,11 +243,17 @@ void relatorioGeral(){
 
     final = final + result + ";";
 
+    //estado dos alarmes
+    final = final + "at" + String(alarmeTemperatura) + ";" ;
+    final = final + "am" + String(alarmeMovimento) + ";" ;
+
     //forcar passar float to int
     int temperatura = (int)lerTemperatura();
+    int humidade = (int)lerHumidade();
 
     //numero float com 0 casas decimais
-    result = "tp" + String(temperatura);
+    final = final + "tp" + String(temperatura) + ";";
+    final = final + "hm" + String(humidade) + ";";
 
     final = final + result + ";" ;
 
@@ -322,9 +341,32 @@ void executarAcao(String acao){
         return;
     }
 
+    //alarmes Movimento
+    if (acao == "am0") {
+        alarmeMovimento = 0;
+    }
+
+    if(acao == "am1"){
+        alarmeMovimento = 1;
+    }
+
+    //alarmes temperatura
+    if (acao == "at0") {
+        alarmeTemperatura = 0;
+    }
+
+    if(acao == "at1"){
+        alarmeTemperatura = 1;
+    }
+
     //Travar todas as acoes que  nao seja desligar estados de emergencia
+    //a menos que o alarmes estejam desligados
     //caso algumas delas estejam ativadas ou ligadas
-    if(estadoEmergenciaIncendio == 1 || estadoEmergenciaInvasao == 1){
+    if (estadoEmergenciaIncendio == 1 && alarmeTemperatura == 1) {
+        return;
+    }
+
+    if(estadoEmergenciaInvasao == 1 && alarmeMovimento == 1){
         return;
     }
 
@@ -380,8 +422,12 @@ void executarAcao(String acao){
 //cm0 = estado de emergencia sinal de movimento Desligadok
 
 //Ligar alarme para que o sinal de movimento possa comecar a funcionar
-//al0 = alarme desligado
-//al1 = alarme ligado
+//am0 = alarme desligado
+//am1 = alarme ligado
+
+//Ligar alarme para que o sinal de temperatura possa comecar a funcionar
+//at0 = alarme desligado
+//at1 = alarme ligado
 
 //---------- sm = SERVOMOTOR ----------
 //sm1 = servo motor portao abrir
@@ -390,6 +436,7 @@ void executarAcao(String acao){
 //pi = ping para retornar a funcao relatorioGeral()
 
 //tp[float temparature] == variavel que vai representar a temperatura
+//hm[float humidade] == variavel que vai representar a temperatura
 
 
 //----------- Anotacoes -----------
