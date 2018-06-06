@@ -48,4 +48,13 @@ $(document).ready(function () {
 
     })
 
+    $(".gg").click(function () {
+        let value = confirm ("Realmente deseja cancelar o alarme")
+
+        if(value == 1){
+            socket.emit('msg', JSON.stringify({ msg: this.getAttribute("id")+"0", token: $.cookie("token") }));
+        }
+
+    })
+
 });

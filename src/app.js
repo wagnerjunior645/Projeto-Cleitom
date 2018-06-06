@@ -193,10 +193,11 @@ io.on('connection', function (socket) {
 
 // STARTANDO O SERVER
 
-const porta = 4200
+const porta = 8080
+const ip = "192.168.43.177"
 
-http.listen(porta, function () {
-    console.log(`Server On Rodando na porta ${porta}`);
+http.listen(porta,ip, function () {
+    console.log(`Server On Rodando na porta ${porta},IP ${ip}`);
 });
 
 //let numeroStance = process.env.NODE_APP_INSTANCE | 1;
